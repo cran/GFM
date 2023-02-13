@@ -12,7 +12,7 @@
 
 <meta name="author" content="Wei Liu" />
 
-<meta name="date" content="2022-01-04" />
+<meta name="date" content="2023-02-13" />
 
 <title>GFM: A Simple Transcriptomics Data</title>
 
@@ -318,42 +318,53 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">GFM: A Simple Transcriptomics Data</h1>
 <h4 class="author">Wei Liu</h4>
-<h4 class="date">2022-01-04</h4>
+<h4 class="date">2023-02-13</h4>
 
 
 
 <div id="load-real-data" class="section level3">
 <h3>Load real data</h3>
-<p>First, we load the ‘GFM’ package and the real data which can be downloaded at ‘here’ (<a href="https://pan.baidu.com/s/1ralmQYqcW3XatLHbBrMXEw" class="uri">https://pan.baidu.com/s/1ralmQYqcW3XatLHbBrMXEw</a>) and extraction code being ‘sppy’. This data is in the format of ‘.Rdata’ that inludes a gene expression matrix ‘X’ with 3460 rows (cells) and 2000 columns (genes), a vector ‘group’ specifying two groups of variable types (‘type’ variable) including ‘gaussian’ and ‘poisson’ and a vector ‘y’ meaning the clusters of cells annotated by experts. We compare the performance of ‘GFM’ and ‘LFM’ in downstream clustering analysis based on the benchchmarked clusters ‘y’.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(<span class="st">&quot;GFM&quot;</span>)</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co">#load(&quot;D:\\Dropbox\\MixImpute\\Rcode\\RealData\\BrainSTdata\\Brain76.Rdata&quot;)</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co">#ls() # check the variables</span></a></code></pre></div>
+<p>First, we load the ‘GFM’ package and the real data which can be downloaded <a href="https://github.com/feiyoung/GFM/tree/main/vignettes_data">here</a>. This data is in the format of ‘.Rdata’ that inludes a gene expression matrix ‘X’ with 3460 rows (cells) and 2000 columns (genes), a vector ‘group’ specifying two groups of variable types (‘type’ variable) including ‘gaussian’ and ‘poisson’ and a vector ‘y’ meaning the clusters of cells annotated by experts. We compare the performance of ‘GFM’ and ‘LFM’ in downstream clustering analysis based on the benchchmarked clusters ‘y’.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">githubURL &lt;-<span class="st"> &quot;https://github.com/feiyoung/GFM/blob/main/vignettes_data/Brain76.Rdata?raw=true&quot;</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">download.file</span>(githubURL,<span class="st">&quot;Brain76.Rdata&quot;</span>,<span class="dt">mode=</span><span class="st">&#39;wb&#39;</span>)</a></code></pre></div>
+<p>Then load to R</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">load</span>(<span class="st">&quot;Brain76.Rdata&quot;</span>)</a>
+<a class="sourceLine" id="cb2-2" title="2">XList &lt;-<span class="st"> </span><span class="kw">list</span>(X[,group<span class="op">==</span><span class="dv">1</span>], X[,group<span class="op">==</span><span class="dv">2</span>])</a>
+<a class="sourceLine" id="cb2-3" title="3">types &lt;-<span class="st"> </span>type</a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="kw">str</span>(XList)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw">library</span>(<span class="st">&quot;GFM&quot;</span>)</a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="co">#load(&quot;vignettes_data\\Brain76.Rdata&quot;)</span></a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="co">#ls() # check the variables</span></a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="kw">set.seed</span>(<span class="dv">2023</span>) <span class="co"># set a random seed for reproducibility.</span></a></code></pre></div>
 </div>
 <div id="fit-gfm-model" class="section level3">
 <h3>Fit GFM model</h3>
 <p>We fit the GFM model using ‘gfm’ function.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">q &lt;-<span class="st"> </span><span class="dv">15</span></a>
-<a class="sourceLine" id="cb2-2" title="2">gfm1 &lt;-<span class="st"> </span><span class="kw">gfm</span>(X, group, type, <span class="dt">q=</span> q, <span class="dt">output =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">q &lt;-<span class="st"> </span><span class="dv">15</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="kw">system.time</span>(</a>
+<a class="sourceLine" id="cb4-3" title="3">  gfm1 &lt;-<span class="st"> </span><span class="kw">gfm</span>(XList, types, <span class="dt">q=</span> q, <span class="dt">verbose =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb4-4" title="4">)</a></code></pre></div>
 </div>
 <div id="compare-with-lfm-in-downstream-analysis" class="section level3">
 <h3>Compare with LFM in downstream analysis</h3>
 <p>We conduct the clustering analysis based on the extracted factors by GFM and evaluate the adjusted rand index (ARI) value based on the annotated cluster labels by experts.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">hH &lt;-<span class="st"> </span>gfm1<span class="op">$</span>hH</a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="kw">library</span>(mclust)</a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb3-4" title="4">gmm1 &lt;-<span class="st"> </span><span class="kw">Mclust</span>(hH, <span class="dt">G=</span><span class="dv">7</span>)</a>
-<a class="sourceLine" id="cb3-5" title="5">ARI_gfm &lt;-<span class="st"> </span><span class="kw">adjustedRandIndex</span>(gmm1<span class="op">$</span>classification, y)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">hH &lt;-<span class="st"> </span>gfm1<span class="op">$</span>hH</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="kw">library</span>(mclust)</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb5-4" title="4">gmm1 &lt;-<span class="st"> </span><span class="kw">Mclust</span>(hH, <span class="dt">G=</span><span class="dv">7</span>)</a>
+<a class="sourceLine" id="cb5-5" title="5">ARI_gfm &lt;-<span class="st"> </span><span class="kw">adjustedRandIndex</span>(gmm1<span class="op">$</span>classification, y)</a></code></pre></div>
 <p>We fit linear factor model using same number of factors.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">fac &lt;-<span class="st"> </span><span class="kw">Factorm</span>(X, <span class="dt">q=</span><span class="dv">15</span>)</a>
-<a class="sourceLine" id="cb4-2" title="2">hH_lfm &lt;-<span class="st"> </span>fac<span class="op">$</span>hH</a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb4-4" title="4">gmm2 &lt;-<span class="st"> </span><span class="kw">Mclust</span>(hH_lfm, <span class="dt">G=</span><span class="dv">7</span>)</a>
-<a class="sourceLine" id="cb4-5" title="5">ARI_lfm &lt;-<span class="st"> </span><span class="kw">adjustedRandIndex</span>(gmm2<span class="op">$</span>classification, y)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">fac &lt;-<span class="st"> </span><span class="kw">Factorm</span>(X, <span class="dt">q=</span><span class="dv">15</span>)</a>
+<a class="sourceLine" id="cb6-2" title="2">hH_lfm &lt;-<span class="st"> </span>fac<span class="op">$</span>hH</a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb6-4" title="4">gmm2 &lt;-<span class="st"> </span><span class="kw">Mclust</span>(hH_lfm, <span class="dt">G=</span><span class="dv">7</span>)</a>
+<a class="sourceLine" id="cb6-5" title="5">ARI_lfm &lt;-<span class="st"> </span><span class="kw">adjustedRandIndex</span>(gmm2<span class="op">$</span>classification, y)</a></code></pre></div>
 <p>Compare with the ARIs by visualization.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">library</span>(ggplot2)</a>
-<a class="sourceLine" id="cb5-2" title="2">df1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">ARI=</span> <span class="kw">c</span>(ARI_gfm,ARI_lfm),</a>
-<a class="sourceLine" id="cb5-3" title="3">                    <span class="dt">Method =</span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&#39;GFM&#39;</span>, <span class="st">&quot;LFM&quot;</span>)))</a>
-<a class="sourceLine" id="cb5-4" title="4">  <span class="kw">ggplot</span>(<span class="dt">data=</span>df1, <span class="kw">aes</span>(<span class="dt">x=</span>Method, <span class="dt">y=</span>ARI, <span class="dt">fill=</span>Method)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">width =</span> <span class="fl">0.5</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb7-2" title="2">df1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">ARI=</span> <span class="kw">c</span>(ARI_gfm,ARI_lfm),</a>
+<a class="sourceLine" id="cb7-3" title="3">                    <span class="dt">Method =</span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="st">&#39;GFM&#39;</span>, <span class="st">&quot;LFM&quot;</span>)))</a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="kw">ggplot</span>(<span class="dt">data=</span>df1, <span class="kw">aes</span>(<span class="dt">x=</span>Method, <span class="dt">y=</span>ARI, <span class="dt">fill=</span>Method)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">width =</span> <span class="fl">0.5</span>)</a></code></pre></div>
 </div>
 
 

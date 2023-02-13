@@ -5,13 +5,28 @@ knitr::opts_chunk$set(
 )
 
 ## ----eval=FALSE---------------------------------------------------------------
+#  githubURL <- "https://github.com/feiyoung/GFM/blob/main/vignettes_data/Brain76.Rdata?raw=true"
+#  download.file(githubURL,"Brain76.Rdata",mode='wb')
+
+## ----eval=FALSE---------------------------------------------------------------
+#  load("Brain76.Rdata")
+#  XList <- list(X[,group==1], X[,group==2])
+#  types <- type
+#  str(XList)
+
+## ----eval=FALSE---------------------------------------------------------------
+#  
 #  library("GFM")
-#  #load("D:\\Dropbox\\MixImpute\\Rcode\\RealData\\BrainSTdata\\Brain76.Rdata")
+#  #load("vignettes_data\\Brain76.Rdata")
 #  #ls() # check the variables
+#  set.seed(2023) # set a random seed for reproducibility.
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  q <- 15
-#  gfm1 <- gfm(X, group, type, q= q, output = FALSE)
+#  system.time(
+#    gfm1 <- gfm(XList, types, q= q, verbose = TRUE)
+#  )
+#  
 #  
 
 ## ----eval=FALSE---------------------------------------------------------------
@@ -34,5 +49,5 @@ knitr::opts_chunk$set(
 #  library(ggplot2)
 #  df1 <- data.frame(ARI= c(ARI_gfm,ARI_lfm),
 #                      Method =factor(c('GFM', "LFM")))
-#    ggplot(data=df1, aes(x=Method, y=ARI, fill=Method)) + geom_bar(position = "dodge", stat="identity",width = 0.5)
+#  ggplot(data=df1, aes(x=Method, y=ARI, fill=Method)) + geom_bar(position = "dodge", stat="identity",width = 0.5)
 

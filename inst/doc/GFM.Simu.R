@@ -4,22 +4,25 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----eval=TRUE----------------------------------------------------------------
-library("GFM")
+## ----eval=FALSE---------------------------------------------------------------
+#  library("GFM")
+#  set.seed(1) # set a random seed for reproducibility.
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  ## Homogeneous  normal variables
 #    dat <- gendata(q = 2, n=100, p=100, rho=3)
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  # full-one vector means there is only one variable type within all variables.
-#    group <- rep(1,ncol(dat$X))
+#  # Obtain the observed data
+#    XList <- dat$XList # this is the data in the form of matrix list.
+#    str(XList)
+#    X <- dat$X # this is the data in form of matrix
 #  # set variables' type, 'gaussian' means there is  continous variable type.
-#    type <- 'gaussian'
+#    types <- 'gaussian'
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # specify q=2
-#    gfm1 <- gfm(dat$X, group, type, q=2, output = FALSE)
+#    gfm1 <- gfm(XList, types,  q=2, verbose = FALSE)
 #  
 #    # measure the performance of GFM estimators in terms of canonical correlations
 #    measurefun(gfm1$hH, dat$H0, type='ccor')
@@ -27,25 +30,27 @@ library("GFM")
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # select q automatically
-#    gfm2 <- gfm(dat$X, group, type, q=NULL, q_set = 1:6, output = FALSE)
-#  # measure the performance of GFM estimators in terms of canonical correlations
-#    measurefun(gfm2$hH, dat$H0, type='ccor')
-#    measurefun(gfm2$hB, dat$B0, type='ccor')
+#    hq <- chooseFacNumber(XList, types, q_set = 1:6, verbose = FALSE)
+#    hq
 
 ## ----eval=FALSE---------------------------------------------------------------
 #    dat <- gendata(seed=1, n=100, p=100, type='heternorm', q=2, rho=1)
-#    group <- rep(1,ncol(dat$X))
-#    type <- 'gaussian'
+#   # Obtain the observed data
+#    XList <- dat$XList # this is the data in the form of matrix list.
+#    str(XList)
+#    X <- dat$X # this is the data in form of matrix
+#  # set variables' type, 'gaussian' means there is  continous variable type.
+#    types <- 'gaussian'
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # specify q=2
-#    gfm1 <- gfm(dat$X, group, type, q=2, output = FALSE)
+#    gfm1 <- gfm(XList, types, q=2, verbose = FALSE)
 #  
 #    # measure the performance of GFM estimators in terms of canonical correlations
 #    corH_gfm <- measurefun(gfm1$hH, dat$H0, type='ccor')
 #    corB_gfm <- measurefun(gfm1$hB, dat$B0, type='ccor')
 #  
-#    lfm1 <- Factorm(dat$X, q=2)
+#    lfm1 <- Factorm(X, q=2)
 #    corH_lfm <- measurefun(lfm1$hH, dat$H0, type='ccor')
 #    corB_lfm <- measurefun(lfm1$hB, dat$B0, type='ccor')
 #  
@@ -57,34 +62,41 @@ library("GFM")
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # select q automatically
-#    gfm2 <- gfm(dat$X, group, type, q=NULL, q_set = 1:4, output = FALSE)
-#  # measure the performance of GFM estimators in terms of canonical correlations
-#    corH_gfm <- measurefun(gfm2$hH, dat$H0, type='ccor')
-#    corB_gfm <- measurefun(gfm2$hB, dat$B0, type='ccor')
-#  
-#    library(ggplot2)
-#    df1 <- data.frame(CCor= c(corH_gfm, corH_lfm, corB_gfm, corB_lfm),
-#                      Method =factor(rep(c('GFM', "LFM"), times=2)),
-#                      Quantity= factor(c(rep('factors',2), rep("loadings", 2))))
-#    ggplot(data=df1, aes(x=Quantity, y=CCor, fill=Method)) + geom_bar(position = "dodge", stat="identity",width = 0.5)
+#     hq <- chooseFacNumber(XList, types, q_set = 1:6, verbose = FALSE)
+#    hq
 
 ## ----eval=FALSE---------------------------------------------------------------
 #    q <- 3; p <- 200
 #    dat <- gendata(seed=1, n=200, p=p, type='pois', q=q, rho=4)
-#    group <- rep(1,ncol(dat$X))
-#    type <- 'poisson'
+#    # Obtain the observed data
+#    XList <- dat$XList # this is the data in the form of matrix list.
+#    str(XList)
+#    X <- dat$X # this is the data in form of matrix
+#  # set variables' type, 'gaussian' means there is  continous variable type.
+#    types <- 'poisson'
 
 ## ----eval=FALSE---------------------------------------------------------------
 #    system.time(
-#      gfm2 <- gfm(dat$X, group, type,parallel = TRUE, q=NULL, q_set = 1:4, output = FALSE, fast_version = TRUE))
+#     gfm1 <- gfm(XList, types, q=3, verbose = FALSE)
+#    )
+
+## ----eval=FALSE---------------------------------------------------------------
+#  system.time(
+#    hq <- chooseFacNumber(XList, types, select_method = "ratio_test", q_set = 1:6, verbose=FALSE)
+#  )
+#  
+#  system.time(
+#    hq <- chooseFacNumber(XList, types, q_set=1:6, select_method = "IC", parallelList=list(parallel=TRUE))
+#  )
+#  
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  
 #    # measure the performance of GFM estimators in terms of canonical correlations
-#    corH_gfm <- measurefun(gfm2$hH, dat$H0, type='ccor')
-#    corB_gfm <- measurefun(gfm2$hB, dat$B0, type='ccor')
+#    corH_gfm <- measurefun(gfm1$hH, dat$H0, type='ccor')
+#    corB_gfm <- measurefun(gfm1$hB, dat$B0, type='ccor')
 #  
-#    lfm1 <- Factorm(dat$X, q=3)
+#    lfm1 <- Factorm(X, q=3)
 #    corH_lfm <- measurefun(lfm1$hH, dat$H0, type='ccor')
 #    corB_lfm <- measurefun(lfm1$hB, dat$B0, type='ccor')
 #  
@@ -96,18 +108,22 @@ library("GFM")
 
 ## ----eval=FALSE---------------------------------------------------------------
 #    dat <- gendata(seed=1, n=200, p=200, type='pois_bino', q=2, rho=2)
-#    group <- c(rep(1,ncol(dat$X)/2), rep(2,ncol(dat$X)/2))
-#    type <- c('poisson','binomial')
+#    # Obtain the observed data
+#    XList <- dat$XList # this is the data in the form of matrix list.
+#    str(XList)
+#    X <- dat$X # this is the data in form of matrix
+#    # set variables' type, 'gaussian' means there is  continous variable type.
+#    types <- dat$types
 #    table(dat$X[,1])
 #    table(dat$X[, 200])
 #    # user-specified q=2
-#    gfm2 <- gfm(dat$X, group, type, dropout = 2, q=2, output = FALSE, maxIter=5)
+#    gfm2 <- gfm(XList, types,  q=2, verbose = FALSE)
 #    measurefun(gfm2$hH, dat$H0, type='ccor')
 #    measurefun(gfm2$hB, dat$B0, type='ccor')
 
 ## ----eval=FALSE---------------------------------------------------------------
 #    #  select q automatically
-#    gfm2 <- gfm(dat$X, group, type, dropout = 2, q=NULL, q_set = 1:4, output = FALSE)
+#    hq <- chooseFacNumber(XList, types)
 #    # measure the performance of GFM estimators in terms of canonical correlations
 #    corH_gfm <- measurefun(gfm2$hH, dat$H0, type='ccor')
 #    corB_gfm <- measurefun(gfm2$hB, dat$B0, type='ccor')
