@@ -12,9 +12,9 @@
 
 <meta name="author" content="Wei Liu" />
 
-<meta name="date" content="2023-02-13" />
+<meta name="date" content="2023-08-10" />
 
-<title>GFM: installation and simulated example</title>
+<title>GFM: alternate maximization and information criterion</title>
 
 
 <style type="text/css">
@@ -316,26 +316,18 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">GFM: installation and simulated example</h1>
+<h1 class="title toc-ignore">GFM: alternate maximization and information criterion</h1>
 <h4 class="author">Wei Liu</h4>
-<h4 class="date">2023-02-13</h4>
+<h4 class="date">2023-08-10</h4>
 
 
 
-<div id="install-the-gfm" class="section level2">
-<h2>Install the GFM</h2>
-<p>This vignette provides an introduction to the R package <code>GFM</code>, where the function <code>gfm</code> implements the model <code>GFM</code>, Generalized Factor Model for ultra-high dimensional variables with mixed types. The estimated factors and loading matrices can be applied to a variaty of downstream analyses, such as cell type clustering in single cell RNA sequencing data analysis and important SNPs identification in GWAS data analysis, among others.</p>
-<p>The package can be installed with the command:</p>
-<p><code>library(remotes)</code></p>
-<p><code>remotes::install_github(&quot;feiyoung/GFM&quot;)</code></p>
-<p>or</p>
-<p><code>install.packages(&quot;GFM&quot;)</code></p>
+<p>In this tutorial, we show that the alternate maximization (AM) is used in the first step of the two-step estimation method and the information criterion (IC) method is adopted to choose the number of factors.</p>
+<div id="fit-gfm-model-using-simulated-data" class="section level2">
+<h2>Fit GFM model using simulated data</h2>
 <p>The package can be loaded with the command:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(<span class="st">&quot;GFM&quot;</span>)</a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="kw">set.seed</span>(<span class="dv">1</span>) <span class="co"># set a random seed for reproducibility.</span></a></code></pre></div>
-</div>
-<div id="fit-gfm-model-using-simulated-data" class="section level2">
-<h2>Fit GFM model using simulated data</h2>
 <div id="gfm-can-handle-data-with-homogeneous-normal-variables" class="section level3">
 <h3>GFM can handle data with homogeneous normal variables</h3>
 <p>First, we generate the data with homogeneous normal variables.</p>
@@ -350,14 +342,14 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb3-6" title="6">  types &lt;-<span class="st"> &#39;gaussian&#39;</span> </a></code></pre></div>
 <p>Third, we fit the GFM model with user-specified number of factors.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># specify q=2</span></a>
-<a class="sourceLine" id="cb4-2" title="2">  gfm1 &lt;-<span class="st"> </span><span class="kw">gfm</span>(XList, types,  <span class="dt">q=</span><span class="dv">2</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb4-2" title="2">  gfm1 &lt;-<span class="st"> </span><span class="kw">gfm</span>(XList, types, <span class="dt">algorithm=</span><span class="st">&quot;AM&quot;</span>, <span class="dt">q=</span><span class="dv">2</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb4-3" title="3">  </a>
 <a class="sourceLine" id="cb4-4" title="4">  <span class="co"># measure the performance of GFM estimators in terms of canonical correlations</span></a>
 <a class="sourceLine" id="cb4-5" title="5">  <span class="kw">measurefun</span>(gfm1<span class="op">$</span>hH, dat<span class="op">$</span>H0, <span class="dt">type=</span><span class="st">&#39;ccor&#39;</span>)</a>
 <a class="sourceLine" id="cb4-6" title="6">  <span class="kw">measurefun</span>(gfm1<span class="op">$</span>hB, dat<span class="op">$</span>B0, <span class="dt">type=</span><span class="st">&#39;ccor&#39;</span>)</a></code></pre></div>
 <p>The number of factors can also be determined by data-driven manners.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># select q automatically</span></a>
-<a class="sourceLine" id="cb5-2" title="2">  hq &lt;-<span class="st"> </span><span class="kw">chooseFacNumber</span>(XList, types, <span class="dt">q_set =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb5-2" title="2">  hq &lt;-<span class="st"> </span><span class="kw">chooseFacNumber</span>(XList, types, <span class="dt">select_method=</span><span class="st">&#39;IC&#39;</span>, <span class="dt">q_set =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>, <span class="dt">parallelList=</span><span class="kw">list</span>(<span class="dt">parallel=</span><span class="ot">TRUE</span>))</a>
 <a class="sourceLine" id="cb5-3" title="3">  hq</a></code></pre></div>
 </div>
 <div id="gfm-outperforms-lfm-in-analyzing-data-with-heterogeous-normal-variables" class="section level3">
@@ -372,7 +364,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb6-7" title="7">  types &lt;-<span class="st"> &#39;gaussian&#39;</span> </a></code></pre></div>
 <p>Third, we fit the GFM model with user-specified number of factors and compare the results with that of linear factor models.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># specify q=2</span></a>
-<a class="sourceLine" id="cb7-2" title="2">  gfm1 &lt;-<span class="st"> </span><span class="kw">gfm</span>(XList, types, <span class="dt">q=</span><span class="dv">2</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb7-2" title="2">  gfm1 &lt;-<span class="st"> </span><span class="kw">gfm</span>(XList, types,  <span class="dt">algorithm=</span><span class="st">&quot;AM&quot;</span>, <span class="dt">q=</span><span class="dv">2</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb7-3" title="3">  </a>
 <a class="sourceLine" id="cb7-4" title="4">  <span class="co"># measure the performance of GFM estimators in terms of canonical correlations</span></a>
 <a class="sourceLine" id="cb7-5" title="5">  corH_gfm &lt;-<span class="st"> </span><span class="kw">measurefun</span>(gfm1<span class="op">$</span>hH, dat<span class="op">$</span>H0, <span class="dt">type=</span><span class="st">&#39;ccor&#39;</span>)</a>
@@ -389,8 +381,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb7-16" title="16">  <span class="kw">ggplot</span>(<span class="dt">data=</span>df1, <span class="kw">aes</span>(<span class="dt">x=</span>Quantity, <span class="dt">y=</span>CCor, <span class="dt">fill=</span>Method)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">position =</span> <span class="st">&quot;dodge&quot;</span>, <span class="dt">stat=</span><span class="st">&quot;identity&quot;</span>,<span class="dt">width =</span> <span class="fl">0.5</span>)</a></code></pre></div>
 <p>The number of factors can also be determined by data-driven manners.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="co"># select q automatically</span></a>
-<a class="sourceLine" id="cb8-2" title="2">   hq &lt;-<span class="st"> </span><span class="kw">chooseFacNumber</span>(XList, types, <span class="dt">q_set =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb8-3" title="3">  hq</a></code></pre></div>
+<a class="sourceLine" id="cb8-2" title="2">  hq &lt;-<span class="st"> </span><span class="kw">chooseFacNumber</span>(XList, types, <span class="dt">select_method=</span><span class="st">&#39;IC&#39;</span>, <span class="dt">q_set =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>, <span class="dt">parallelList=</span><span class="kw">list</span>(<span class="dt">parallel=</span><span class="ot">TRUE</span>))</a></code></pre></div>
 </div>
 <div id="gfm-outperforms-lfm-in-analyzing-data-with-countpoisson-variables" class="section level3">
 <h3>GFM outperforms LFM in analyzing data with Count(Poisson) variables</h3>
@@ -405,16 +396,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb9-8" title="8">  types &lt;-<span class="st"> &#39;poisson&#39;</span></a></code></pre></div>
 <p>Second, we we fit the GFM models given the true number of factors.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">  <span class="kw">system.time</span>(</a>
-<a class="sourceLine" id="cb10-2" title="2">   gfm1 &lt;-<span class="st"> </span><span class="kw">gfm</span>(XList, types, <span class="dt">q=</span><span class="dv">3</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb10-2" title="2">   gfm1 &lt;-<span class="st"> </span><span class="kw">gfm</span>(XList, types,  <span class="dt">algorithm=</span><span class="st">&quot;AM&quot;</span>, <span class="dt">q=</span><span class="dv">3</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb10-3" title="3">  )</a></code></pre></div>
-<p>Additionally, we demonstrate the two methods, eigenvalue ratio test (ratio_test) and information criterion (IC), to choose the number of factors, which suggests both methods can accurately chooose the number of factors, while <code>ratio_test</code> is much more efficient than the <code>IC</code> method that is even though implemented in parallel. Thus, we strongly recommand <code>ratio_test</code>, especially for high-dimensional large-scale data.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">system.time</span>(</a>
-<a class="sourceLine" id="cb11-2" title="2">  hq &lt;-<span class="st"> </span><span class="kw">chooseFacNumber</span>(XList, types, <span class="dt">select_method =</span> <span class="st">&quot;ratio_test&quot;</span>, <span class="dt">q_set =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">verbose=</span><span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb11-3" title="3">)</a>
-<a class="sourceLine" id="cb11-4" title="4"> </a>
-<a class="sourceLine" id="cb11-5" title="5"><span class="kw">system.time</span>(</a>
-<a class="sourceLine" id="cb11-6" title="6">  hq &lt;-<span class="st"> </span><span class="kw">chooseFacNumber</span>(XList, types, <span class="dt">q_set=</span><span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">select_method =</span> <span class="st">&quot;IC&quot;</span>, <span class="dt">parallelList=</span><span class="kw">list</span>(<span class="dt">parallel=</span><span class="ot">TRUE</span>))</a>
-<a class="sourceLine" id="cb11-7" title="7">)</a></code></pre></div>
+<a class="sourceLine" id="cb11-2" title="2">  hq &lt;-<span class="st"> </span><span class="kw">chooseFacNumber</span>(XList, types, <span class="dt">q_set=</span><span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">select_method =</span> <span class="st">&quot;IC&quot;</span>, <span class="dt">parallelList=</span><span class="kw">list</span>(<span class="dt">parallel=</span><span class="ot">TRUE</span>))</a>
+<a class="sourceLine" id="cb11-3" title="3">)</a></code></pre></div>
 <p>Third, we compare the results with that of linear factor models.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"></a>
 <a class="sourceLine" id="cb12-2" title="2">  <span class="co"># measure the performance of GFM estimators in terms of canonical correlations</span></a>
@@ -444,12 +430,12 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb13-8" title="8">  <span class="kw">table</span>(dat<span class="op">$</span>X[,<span class="dv">1</span>])</a>
 <a class="sourceLine" id="cb13-9" title="9">  <span class="kw">table</span>(dat<span class="op">$</span>X[, <span class="dv">200</span>])</a>
 <a class="sourceLine" id="cb13-10" title="10">  <span class="co"># user-specified q=2</span></a>
-<a class="sourceLine" id="cb13-11" title="11">  gfm2 &lt;-<span class="st"> </span><span class="kw">gfm</span>(XList, types,  <span class="dt">q=</span><span class="dv">2</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb13-11" title="11">  gfm2 &lt;-<span class="st"> </span><span class="kw">gfm</span>(XList, types,  <span class="dt">algorithm=</span><span class="st">&quot;AM&quot;</span>, <span class="dt">q=</span><span class="dv">2</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb13-12" title="12">  <span class="kw">measurefun</span>(gfm2<span class="op">$</span>hH, dat<span class="op">$</span>H0, <span class="dt">type=</span><span class="st">&#39;ccor&#39;</span>)</a>
 <a class="sourceLine" id="cb13-13" title="13">  <span class="kw">measurefun</span>(gfm2<span class="op">$</span>hB, dat<span class="op">$</span>B0, <span class="dt">type=</span><span class="st">&#39;ccor&#39;</span>)</a></code></pre></div>
 <p>Third, we compare the results with that of linear factor models.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">  <span class="co">#  select q automatically</span></a>
-<a class="sourceLine" id="cb14-2" title="2">  hq &lt;-<span class="st"> </span><span class="kw">chooseFacNumber</span>(XList, types)</a>
+<a class="sourceLine" id="cb14-2" title="2">  hq &lt;-<span class="st"> </span><span class="kw">chooseFacNumber</span>(XList, types, <span class="dt">select_method=</span><span class="st">&#39;IC&#39;</span>, <span class="dt">q_set =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>, <span class="dt">parallelList=</span><span class="kw">list</span>(<span class="dt">parallel=</span><span class="ot">TRUE</span>))</a>
 <a class="sourceLine" id="cb14-3" title="3">  <span class="co"># measure the performance of GFM estimators in terms of canonical correlations</span></a>
 <a class="sourceLine" id="cb14-4" title="4">  corH_gfm &lt;-<span class="st"> </span><span class="kw">measurefun</span>(gfm2<span class="op">$</span>hH, dat<span class="op">$</span>H0, <span class="dt">type=</span><span class="st">&#39;ccor&#39;</span>)</a>
 <a class="sourceLine" id="cb14-5" title="5">  corB_gfm &lt;-<span class="st"> </span><span class="kw">measurefun</span>(gfm2<span class="op">$</span>hB, dat<span class="op">$</span>B0, <span class="dt">type=</span><span class="st">&#39;ccor&#39;</span>)</a>
@@ -487,7 +473,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb16-17" title="17"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb16-18" title="18"><span class="co">#&gt; loaded via a namespace (and not attached):</span></a>
 <a class="sourceLine" id="cb16-19" title="19"><span class="co">#&gt;  [1] digest_0.6.29   R6_2.5.1        jsonlite_1.8.0  magrittr_2.0.3 </span></a>
-<a class="sourceLine" id="cb16-20" title="20"><span class="co">#&gt;  [5] evaluate_0.15   stringi_1.7.6   rlang_1.0.2     cli_3.2.0      </span></a>
+<a class="sourceLine" id="cb16-20" title="20"><span class="co">#&gt;  [5] evaluate_0.15   stringi_1.7.6   rlang_1.1.0     cli_3.2.0      </span></a>
 <a class="sourceLine" id="cb16-21" title="21"><span class="co">#&gt;  [9] rstudioapi_0.13 jquerylib_0.1.4 bslib_0.3.1     rmarkdown_2.11 </span></a>
 <a class="sourceLine" id="cb16-22" title="22"><span class="co">#&gt; [13] tools_4.1.2     stringr_1.4.0   xfun_0.29       yaml_2.3.6     </span></a>
 <a class="sourceLine" id="cb16-23" title="23"><span class="co">#&gt; [17] fastmap_1.1.0   compiler_4.1.2  htmltools_0.5.2 knitr_1.37     </span></a>

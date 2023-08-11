@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ### Load real data
 First, we load the 'GFM' package and the real data which can be downloaded [here](https://github.com/feiyoung/GFM/tree/main/vignettes_data). This data is in the format of '.Rdata' that inludes a gene expression matrix 'X' with 3460 rows (cells) and 2000 columns (genes), a vector 'group' specifying two groups of variable types ('type' variable) including 'gaussian' and 'poisson' and a vector 'y' meaning the clusters of cells annotated by experts. We compare the performance of 'GFM' and 'LFM' in downstream clustering analysis based on the benchchmarked clusters 'y'.
-```{r  eval=FALSE}
+```{r  eval= FALSE}
 githubURL <- "https://github.com/feiyoung/GFM/blob/main/vignettes_data/Brain76.Rdata?raw=true"
 download.file(githubURL,"Brain76.Rdata",mode='wb')
 ```

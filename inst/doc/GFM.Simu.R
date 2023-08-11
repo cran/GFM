@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # specify q=2
-#    gfm1 <- gfm(XList, types,  q=2, verbose = FALSE)
+#    gfm1 <- gfm(XList, types, algorithm="AM", q=2, verbose = FALSE)
 #  
 #    # measure the performance of GFM estimators in terms of canonical correlations
 #    measurefun(gfm1$hH, dat$H0, type='ccor')
@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # select q automatically
-#    hq <- chooseFacNumber(XList, types, q_set = 1:6, verbose = FALSE)
+#    hq <- chooseFacNumber(XList, types, select_method='IC', q_set = 1:6, verbose = FALSE, parallelList=list(parallel=TRUE))
 #    hq
 
 ## ----eval=FALSE---------------------------------------------------------------
@@ -44,7 +44,7 @@ knitr::opts_chunk$set(
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # specify q=2
-#    gfm1 <- gfm(XList, types, q=2, verbose = FALSE)
+#    gfm1 <- gfm(XList, types,  algorithm="AM", q=2, verbose = FALSE)
 #  
 #    # measure the performance of GFM estimators in terms of canonical correlations
 #    corH_gfm <- measurefun(gfm1$hH, dat$H0, type='ccor')
@@ -62,8 +62,7 @@ knitr::opts_chunk$set(
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  # select q automatically
-#     hq <- chooseFacNumber(XList, types, q_set = 1:6, verbose = FALSE)
-#    hq
+#    hq <- chooseFacNumber(XList, types, select_method='IC', q_set = 1:6, verbose = FALSE, parallelList=list(parallel=TRUE))
 
 ## ----eval=FALSE---------------------------------------------------------------
 #    q <- 3; p <- 200
@@ -77,14 +76,10 @@ knitr::opts_chunk$set(
 
 ## ----eval=FALSE---------------------------------------------------------------
 #    system.time(
-#     gfm1 <- gfm(XList, types, q=3, verbose = FALSE)
+#     gfm1 <- gfm(XList, types,  algorithm="AM", q=3, verbose = FALSE)
 #    )
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  system.time(
-#    hq <- chooseFacNumber(XList, types, select_method = "ratio_test", q_set = 1:6, verbose=FALSE)
-#  )
-#  
 #  system.time(
 #    hq <- chooseFacNumber(XList, types, q_set=1:6, select_method = "IC", parallelList=list(parallel=TRUE))
 #  )
@@ -117,13 +112,13 @@ knitr::opts_chunk$set(
 #    table(dat$X[,1])
 #    table(dat$X[, 200])
 #    # user-specified q=2
-#    gfm2 <- gfm(XList, types,  q=2, verbose = FALSE)
+#    gfm2 <- gfm(XList, types,  algorithm="AM", q=2, verbose = FALSE)
 #    measurefun(gfm2$hH, dat$H0, type='ccor')
 #    measurefun(gfm2$hB, dat$B0, type='ccor')
 
 ## ----eval=FALSE---------------------------------------------------------------
 #    #  select q automatically
-#    hq <- chooseFacNumber(XList, types)
+#    hq <- chooseFacNumber(XList, types, select_method='IC', q_set = 1:4, verbose = FALSE, parallelList=list(parallel=TRUE))
 #    # measure the performance of GFM estimators in terms of canonical correlations
 #    corH_gfm <- measurefun(gfm2$hH, dat$H0, type='ccor')
 #    corB_gfm <- measurefun(gfm2$hB, dat$B0, type='ccor')

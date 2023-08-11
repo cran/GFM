@@ -4,7 +4,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----eval=FALSE---------------------------------------------------------------
+## ----eval= FALSE--------------------------------------------------------------
 #  githubURL <- "https://github.com/feiyoung/GFM/blob/main/vignettes_data/Brain76.Rdata?raw=true"
 #  download.file(githubURL,"Brain76.Rdata",mode='wb')
 

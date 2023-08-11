@@ -1,14 +1,14 @@
 Package: GFM
 Type: Package
 Title: Generalized Factor Model
-Version: 1.2.0
-Date: 2023-02-13
+Version: 1.2.1
+Date: 2023-08-10
 License: GPL-3
 Authors@R: 
     c(person(given = "Wei",
              family = "Liu",
              role = c("aut", "cre"),
-             email = "weiliu@smail.swufe.edu.cn"),
+             email = "LiuWeideng@gmail.com"),
       person(given = "Huazhen",
              family = "Lin",
              role = "aut"),
@@ -17,12 +17,16 @@ Authors@R:
              role = "aut"),
       person(given = "Jin",
              family = "Liu",
+             role = "aut"),
+      person(given = "Jinyu",
+             family = "Nie",
              role = "aut"))
 Author: Wei Liu [aut, cre],
   Huazhen Lin [aut],
   Shurong Zheng [aut],
-  Jin Liu [aut]
-Maintainer: Wei Liu <weiliu@smail.swufe.edu.cn>
+  Jin Liu [aut],
+  Jinyu Nie [aut]
+Maintainer: Wei Liu <LiuWeideng@gmail.com>
 Description: Generalized factor model is implemented for ultra-high dimensional data with mixed-type variables.
     Two algorithms, variational EM and alternate maximization, are designed to implement the generalized factor model,
     respectively. The factor matrix and loading matrix together with the number of factors can be well estimated. 
@@ -39,6 +43,6 @@ VignetteBuilder: knitr
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 NeedsCompilation: yes
-Packaged: 2023-02-13 12:47:04 UTC; Liuxianju
+Packaged: 2023-08-10 14:20:58 UTC; Liuxianju
 Repository: CRAN
-Date/Publication: 2023-02-13 14:00:11 UTC
+Date/Publication: 2023-08-11 06:22:04 UTC
